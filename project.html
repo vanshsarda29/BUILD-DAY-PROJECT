@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Soundboard</title>
+
+  <style>
+    
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .controls {
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .sound-btn {
+      width: 100%;
+      max-width: 160px;
+      padding: 16px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      color: #333;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .sound-btn:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+
+    .sound-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+    }
+
+    
+    .buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    
+    #mute-btn {
+      padding: 10px 20px;
+      background: #ff5252;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    #mute-btn:hover {
+      background: #e04747;
+    }
+
+   
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #volume-slider {
+      width: 120px;
+    }
+
+    
+    @media (max-width: 480px) {
+      .sound-btn {
+        max-width: 140px;
+        padding: 14px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="wrapper">
+
+    <h1>Soundboard</h1>
+
+    
+    <div class="controls">
+      <button id="mute-btn">Mute</button>
+
+      <div class="volume-control">
+        <label for="volume-slider">Volume</label>
+        <input id="volume-slider" type="range" min="0" max="100" value="80" />
+      </div>
+    </div>
+
+    
+    <div class="buttons-container">
+      <button class="sound-btn" data-sound="applause.wav">Applause</button>
+      <button class="sound-btn" data-sound="beastroar.wav">Beast Roar</button>
+      <button class="sound-btn" data-sound="cinematicThunder.wav">Cinematic Thunder</button>
+      <button class="sound-btn" data-sound="sneeze.wav">Sneeze</button>
+      <button class="sound-btn" data-sound="telephone.wav">Telephone</button>
+    </div>
+
+  </div>
+  <script>
+    const buttons = Array.from(document.querySelectorAll('.sound-btn'));
+    const muteBtn = document.getElementById('mute-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    console.log('buttons found:', buttons.length);
+
+   
+    const soundPaths = buttons.map(btn => btn.dataset.sound);
+    console.log(soundPaths);
+
+
+    const audios = soundPaths.map(path => {
+    const audio = new Audio(path);
+    audio.preload = "auto";
+    return audio;
+  });
+  console.log("audios:", audios);
+  buttons.forEach((btn, index) => {
+    btn.addEventListener("click", () => {
+      const audio = audios[index];
+      audio.currentTime = 0;  
+      audio.play();
+    });
+  });
+
+  volumeSlider.addEventListener("input", () => {
+    const vol = volumeSlider.value / 100;   
+
+    audios.forEach(audio => {
+      audio.volume = vol;
+    });
+  });
+
+  let isMuted = false;
+
+  muteBtn.addEventListener("click", () => {
+    isMuted = !isMuted;   
+
+    if (isMuted) {
+      audios.forEach(a => a.volume = 0);
+      muteBtn.textContent = "Unmute";
+    } else {
+      const vol = volumeSlider.value / 100;
+      audios.forEach(a => a.volume = vol);
+      muteBtn.textContent = "Mute";
+    }
+  });
+
+  </script>
+
+</body>
+</html>
